@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --page-bg: #f6f5ff;
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-border: rgba(148, 163, 184, 0.22);
+  --text: #0f172a;
+  --muted: #475569;
+  --shadow-soft: 0 20px 45px -24px rgba(15, 23, 42, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  font-family: Inter, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(6, 182, 212, 0.30), transparent 32%),
+    radial-gradient(circle at top right, rgba(236, 72, 153, 0.25), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(139, 92, 246, 0.25), transparent 34%),
+    radial-gradient(circle at bottom left, rgba(34, 197, 94, 0.20), transparent 30%),
+    var(--page-bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e0e7ff;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8b5cf6;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ec4899;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.35s ease-out;
+}
+
+@layer utilities {
+  .bg-blur-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--panel-border);
+    box-shadow: var(--shadow-soft);
+  }
+}
+

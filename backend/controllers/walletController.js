@@ -28,8 +28,7 @@ export const walletController = {
       console.error('Error fetching wallet:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch wallet',
-        error: error.message
+        message: 'Failed to fetch wallet'
       });
     }
   },
@@ -86,8 +85,7 @@ export const walletController = {
       console.error('Error adding money:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to add money',
-        error: error.message
+        message: 'Failed to add money'
       });
     }
   },
@@ -118,8 +116,7 @@ export const walletController = {
       console.error('Error fetching transactions:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch transactions',
-        error: error.message
+        message: 'Failed to fetch transactions'
       });
     }
   },
@@ -184,9 +181,8 @@ export const walletController = {
       console.error('Error during cash out:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to process cash out',
-        error: error.message
-      });
+        message: 'Failed to process cash out'
+      }); 
     }
   },
 
@@ -221,8 +217,7 @@ export const walletController = {
       console.error('Error monitoring balance:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to monitor balance',
-        error: error.message
+        message: 'Failed to monitor balance'
       });
     }
   }
@@ -238,7 +233,7 @@ export const walletController = {
       );
       res.json({ success: true, data: result.rows });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to fetch payout schedules', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to fetch payout schedules' });
     }
   },
 
@@ -256,7 +251,7 @@ export const walletController = {
       );
       res.status(201).json({ success: true, message: 'Payout schedule created', data: result.rows[0] });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to create payout schedule', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to create payout schedule' });
     }
   }
   ,
@@ -272,7 +267,7 @@ export const walletController = {
       );
       if (!result.rows.length) return res.status(404).json({ success: false, message: 'Payout schedule was not found or is already paid' });
       res.json({ success: true, message: 'Payout schedule updated', data: result.rows[0] });
-    } catch (error) { res.status(500).json({ success: false, message: 'Failed to update payout schedule', error: error.message }); }
+    } catch (error) { res.status(500).json({ success: false, message: 'Failed to update payout schedule' }); }
   },
 
   deletePayoutSchedule: async (req, res) => {
@@ -280,7 +275,7 @@ export const walletController = {
       const result = await pool.query(`DELETE FROM payout_schedules WHERE id = $1 AND user_id = $2 AND status != 'paid' RETURNING id`, [req.params.scheduleId, req.user.id]);
       if (!result.rows.length) return res.status(404).json({ success: false, message: 'Payout schedule was not found or is already paid' });
       res.json({ success: true, message: 'Payout schedule deleted' });
-    } catch (error) { res.status(500).json({ success: false, message: 'Failed to delete payout schedule', error: error.message }); }
+    } catch (error) { res.status(500).json({ success: false, message: 'Failed to delete payout schedule' }); }
   },
 
   markPayoutPaid: async (req, res) => {
@@ -292,7 +287,7 @@ export const walletController = {
       );
       if (!result.rows.length) return res.status(400).json({ success: false, message: 'Only scheduled payouts can be marked paid' });
       res.json({ success: true, message: 'Payout marked as paid', data: result.rows[0] });
-    } catch (error) { res.status(500).json({ success: false, message: 'Failed to mark payout as paid', error: error.message }); }
+    } catch (error) { res.status(500).json({ success: false, message: 'Failed to mark payout as paid' }); }
   }
 };
 

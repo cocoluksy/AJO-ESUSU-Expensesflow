@@ -49,8 +49,7 @@ export const contributionController = {
       console.error('Error creating group:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to create group',
-        error: error.message
+        message: 'Failed to create group'
       });
     }
   },
@@ -86,8 +85,7 @@ export const contributionController = {
       console.error('Error fetching public groups:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch groups',
-        error: error.message
+        message: 'Failed to fetch groups'
       });
     }
   },
@@ -127,8 +125,7 @@ export const contributionController = {
       console.error('Error fetching user groups:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch your groups',
-        error: error.message
+        message: 'Failed to fetch your groups'
       });
     }
   },
@@ -190,8 +187,7 @@ export const contributionController = {
       console.error('Error joining group:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to join group',
-        error: error.message
+        message: 'Failed to join group'
       });
     }
   },
@@ -227,12 +223,39 @@ export const contributionController = {
       console.error('Error exiting group:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to exit group',
-        error: error.message
+        message: 'Failed to exit group'
       });
     }
+   },
+
+  // Creator/admin permanently deletes a group and all its related data
+  deleteGroup: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { groupId } = req.params;
+
+      const groupResult = await pool.query(
+        `SELECT creator_id FROM contribution_groups WHERE id = $1`,
+        [groupId]
+      );
+
+      if (groupResult.rows.length === 0) {
+        return res.status(404).json({ success: false, message: 'Group not found' });
+      }
+
+      if (groupResult.rows[0].creator_id !== userId) {
+        return res.status(403).json({ success: false, message: 'Only the group creator can delete this group' });
+      }
+
+      await pool.query(`DELETE FROM contribution_groups WHERE id = $1`, [groupId]);
+
+      res.status(200).json({ success: true, message: 'Group deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting group:', error);
+      res.status(500).json({ success: false, message: 'Failed to delete group' });
+    }
   },
-  
+
   // Admin adds a guest member (no app account needed) — name and address only
   addGuestMember: async (req, res) => {
     try {
@@ -262,7 +285,7 @@ export const contributionController = {
       res.status(201).json({ success: true, message: 'Member added successfully', data: result.rows[0] });
     } catch (error) {
       console.error('Error adding guest member:', error);
-      res.status(500).json({ success: false, message: 'Failed to add member', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to add member' });
     }
   },
 
@@ -292,7 +315,7 @@ export const contributionController = {
       res.status(200).json({ success: true, message: 'Member removed', data: result.rows[0] });
     } catch (error) {
       console.error('Error removing member:', error);
-      res.status(500).json({ success: false, message: 'Failed to remove member', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to remove member' });
     }
   },
 
@@ -322,7 +345,7 @@ export const contributionController = {
       res.status(200).json({ success: true, message: 'Member re-added', data: result.rows[0] });
     } catch (error) {
       console.error('Error re-adding member:', error);
-      res.status(500).json({ success: false, message: 'Failed to re-add member', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to re-add member' });
     }
   },
 
@@ -353,7 +376,7 @@ export const contributionController = {
       res.status(200).json({ success: true, message: 'Payout date updated', data: result.rows[0] });
     } catch (error) {
       console.error('Error setting payout date:', error);
-      res.status(500).json({ success: false, message: 'Failed to set payout date', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to set payout date' });
     }
   },
 
@@ -435,7 +458,7 @@ export const contributionController = {
       }
     } catch (error) {
       console.error('Error adding contribution:', error);
-      res.status(500).json({ success: false, message: 'Failed to add contribution', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to add contribution' });
     }
   },
 
@@ -463,7 +486,7 @@ export const contributionController = {
       res.status(201).json({ success: true, message: 'The group admin has been notified' });
     } catch (error) {
       console.error('Error sending join request:', error);
-      res.status(500).json({ success: false, message: 'Failed to notify admin', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to notify admin' });
     }
   },
   // Get group contributions summary
@@ -526,8 +549,7 @@ export const contributionController = {
       console.error('Error fetching group contributions:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to fetch group contributions',
-        error: error.message
+        message: 'Failed to fetch group contributions'
       });
     }
   },
@@ -568,8 +590,7 @@ export const contributionController = {
       console.error('Error tracking contributions:', error);
       res.status(500).json({
         success: false,
-        message: 'Failed to track contributions',
-        error: error.message
+        message: 'Failed to track contributions'
       });
     }
   }
@@ -583,7 +604,7 @@ export const contributionController = {
       );
       res.json({ success: true, data: result.rows });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to fetch notifications', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
     }
   },
 
@@ -592,7 +613,7 @@ export const contributionController = {
       const result = await pool.query('SELECT * FROM personal_savings WHERE user_id = $1', [req.user.id]);
       res.json({ success: true, data: result.rows[0] || { total_saved: 0, savings_goal: 0, description: '' } });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to fetch personal savings', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to fetch personal savings' });
     }
   },
 
@@ -606,7 +627,7 @@ export const contributionController = {
       const grandTotal = result.rows.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
       res.json({ success: true, data: result.rows, grandTotal });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to fetch savings history', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to fetch savings history' });
     }
   },
 
@@ -628,7 +649,7 @@ export const contributionController = {
 
       res.status(201).json({ success: true, message: 'Savings entry recorded', data: result.rows[0] });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to record savings entry', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to record savings entry' });
     }
   },
 
@@ -646,7 +667,7 @@ export const contributionController = {
       );
       res.json({ success: true, message: 'Personal savings updated', data: result.rows[0] });
     } catch (error) {
-      res.status(500).json({ success: false, message: 'Failed to update personal savings', error: error.message });
+      res.status(500).json({ success: false, message: 'Failed to update personal savings' });
     }
   }
 };

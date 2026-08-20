@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import rateLimit from 'express-rate-limit';
 import initializeDatabase from './config/initDb.js';
 import { errorHandler } from './middleware/auth.js';
 
@@ -30,6 +31,14 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { success: false, message: 'Too many attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
 // Body parser middleware with size limit to prevent buffer overflow
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
@@ -50,6 +59,8 @@ app.get('/api/health', (req, res) => {
 });
 
 // API Routes
+app.use('/api/users/login', authLimiter);
+app.use('/api/users/register', authLimiter);
 app.use('/api/users', userRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/categories', categoryRoutes);

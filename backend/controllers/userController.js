@@ -4,9 +4,12 @@ import pool from '../config/database.js';
 
 // Generate JWT token
 const generateToken = (userId) => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET is not configured. Refusing to issue an insecure token.');
+  }
   return jwt.sign(
     { id: userId },
-    process.env.JWT_SECRET || 'your_super_secret_jwt_key_change_this_in_production',
+    process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRE || '7d' }
   );
 };
@@ -15,8 +18,29 @@ const generateToken = (userId) => {
 const register = async (req, res) => {
   const client = await pool.connect();
   
-  try {
+    try {
     const { email, password, first_name, last_name, business_name } = req.body;
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: 'A valid email address is required'
+      });
+    }
+
+    if (!password || password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 8 characters'
+      });
+    }
+
+    if (!first_name || !first_name.trim() || !last_name || !last_name.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'First name and last name are required'
+      });
+    }
 
     // Check if user already exists
     const userExists = await client.query(

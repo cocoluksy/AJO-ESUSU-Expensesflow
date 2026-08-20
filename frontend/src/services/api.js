@@ -91,7 +91,8 @@ export const contributionAPI = {
   setPayoutDate: (groupId, memberId, data) => API.put(`/contributions/groups/${groupId}/members/${memberId}/payout-date`, data),
   getSavingsHistory: () => API.get('/contributions/personal-savings/history'),
   addSavingsEntry: (data) => API.post('/contributions/personal-savings/history', data),
-  requestToJoin: (groupId) => API.post(`/contributions/groups/${groupId}/request-join`)
+  requestToJoin: (groupId) => API.post(`/contributions/groups/${groupId}/request-join`),
+  deleteGroup: (groupId) => API.delete(`/contributions/groups/${groupId}`)
 };
 
 export default API;

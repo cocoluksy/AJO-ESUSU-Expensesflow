@@ -164,6 +164,20 @@ const ContributionsPage = () => {
     }
   };
 
+  const handleDeleteGroup = async (groupId) => {
+    if (!window.confirm('Delete this group permanently? This cannot be undone.')) return;
+    setError('');
+    try {
+      await contributionAPI.deleteGroup(groupId);
+      setMessage('Group deleted successfully.');
+      setExpandedGroupId(null);
+      setGroupSummary(null);
+      await load();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Could not delete group.');
+    }
+  };
+
   const handleSetPayoutDate = async (e, groupId, memberId) => {
     e.preventDefault();
     setError('');
@@ -333,9 +347,16 @@ const ContributionsPage = () => {
                           <p className="font-semibold">{item.name} {isAdmin && <Badge variant="primary" size="sm"><ShieldCheck size={12} className="mr-1 inline" />Admin</Badge>}</p>
                           <p className="mt-1 text-xs text-slate-500">Group balance: {currency(item.group_balance)}</p>
                         </div>
-                        <Button size="sm" variant="secondary" onClick={() => toggleGroup(item.id)}>
-                          {isExpanded ? 'Hide details' : 'View / manage'}
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button size="sm" variant="secondary" onClick={() => toggleGroup(item.id)}>
+                            {isExpanded ? 'Hide details' : 'View / manage'}
+                          </Button>
+                          {isAdmin && (
+                            <Button size="sm" variant="danger" onClick={() => handleDeleteGroup(item.id)}>
+                              <Trash2 size={14} /> Delete
+                            </Button>
+                          )}
+                        </div>
                       </div>
 
                       {isExpanded && groupSummary && (

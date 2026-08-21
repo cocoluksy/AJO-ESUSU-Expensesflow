@@ -3,7 +3,7 @@
     "frontend": {
       "root": "frontend/"
     },
-        "backend": {
+    "backend": {
       "root": "backend/",
       "entrypoint": "server.js"
     }
@@ -11,5 +11,6 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": { "service": "backend" } },
     { "source": "/(.*)", "destination": { "service": "frontend" } }
-  ]
+  ],
+  "cleanUrls": true
 }
